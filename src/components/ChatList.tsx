@@ -11,7 +11,7 @@ function ChatList(props: any) {
   const { Configuration, OpenAIApi } = require("openai");
 
   const configuration = new Configuration({
-    apiKey: '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',
+    apiKey: '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',
   });
   const openai = new OpenAIApi(configuration);
 
