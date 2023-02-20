@@ -1,27 +1,62 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import styled from "styled-components";
 
-const Chat = () => {
-  const [response, setResponse] = useState(undefined);
-  const { Configuration, OpenAIApi } = require("openai");
+import chatGPTimg from "../chatGPTimg.png"
 
-  const configuration = new Configuration({
-    apiKey: process.env.REACT_APP_API_KEY,
-  });
-  const openai = new OpenAIApi(configuration);
+interface Props {
+  content: string
+}
 
-  const fetchAnswer = async (question: string) => {
-      await openai.createCompletion({
-      model: "text-davinci-003",
-      prompt: question,
-      temperature: 0.7,
-      max_tokens: 48,
-      top_p: 1,
-      frequency_penalty: 0,
-      presence_penalty: 0,
-    }).then((res: any) => console.log(res.data.choices[0].text))
-  };
+const Chat = ({content}: Props) => {
   
-  return <div onClick={() => fetchAnswer("where are you from?")}>아아</div>;
+  return (
+    <Chatwrapper>
+      <img src={chatGPTimg} />
+      <TextWrapper>
+        <div className="name">chatAi</div>
+        <div className="content ">
+          {content}
+          {/* {content.split("\n").map((el, idx) => (
+            <span key={idx}>
+              {el}
+              <br />
+            </span>
+          ))} */}
+        </div>
+      </TextWrapper>
+    </Chatwrapper>
+  )
 };
+
+const Chatwrapper = styled.div`
+  border: 1px solid #e9e3d9;
+  border-radius: 20px;
+  background-color: #1d2f27;
+  max-width: 270px;
+  display: flex;
+  align-items: flex-start;
+  font-size: 12px;
+  color: #e9e3d9;
+  padding: 8px;
+  line-height: 16px;
+  margin-top: 18px;
+  > img {
+    border-radius: 30px;
+    width: 20px;
+    height: 20px;
+    margin-right: 8px;
+  }
+`;
+
+const TextWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  .content {
+    font-family: "mainL";
+  }
+  > .name {
+    font-size: 10px;
+  }
+`;
 
 export default Chat;

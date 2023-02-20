@@ -1,11 +1,20 @@
 import create from 'zustand';
 
-interface Chat {
-  isLoading: boolean,
-  question: string
+interface Chatdata {
+  isMyChat: boolean,
+  content: string
 }
 
-const useStore = create(set => ({
-  isLoading: false,
-  question: ''
+interface Chat {
+  chatData: Chatdata[],
+  setChatData: (isMyChat: boolean, content: string) => void
+}
+
+const ChatStore = create<Chat>(set => ({
+  chatData: [],
+  setChatData: (isMyChat, content) => {
+    set((state) => ({chatData: [...state.chatData, {isMyChat, content}]}))
+  }
 }))
+
+export default ChatStore;
