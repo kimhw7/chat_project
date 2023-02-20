@@ -5,11 +5,6 @@ import { useRef } from "react"
 import Chat from "./Chat"
 import ChatStore from "../ZustandChat"
 
-interface Chatdata {
-  isMyChat: boolean,
-  content: string
-}
-
 function ChatList(props: any) {
   const [chatContent, setChatContent] = useState('')
   const {chatData, setChatData} = ChatStore()
@@ -19,6 +14,26 @@ function ChatList(props: any) {
     apiKey: process.env.REACT_APP_API_KEY,
   });
   const openai = new OpenAIApi(configuration);
+
+    // 메세지 추가시 아래로 이동
+    const messageBoxRef = useRef<any>();
+    const scrollToBottom = () => {
+      if (messageBoxRef.current) {
+        messageBoxRef.current.scrollTop = messageBoxRef.current.scrollHeight;
+      }
+    };
+    useEffect(() => {
+      scrollToBottom();
+    }, [chatData]);
+    
+    // enter 시 메세지 전송
+    const sendOnEnter = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+      if (e.shiftKey && e.key === "Enter") {
+        return;
+      } else if (e.key === "Enter") {
+        handleClickSend();
+      }
+    };
 
   const fetchAnswer = async (question: string) => {
       await openai.createCompletion({
@@ -39,16 +54,6 @@ function ChatList(props: any) {
     fetchAnswer(chatContent)
     setChatContent("");
   }
-  // 메세지 추가시 아래로 이동
-  const messageBoxRef = useRef<any>();
-  const scrollToBottom = () => {
-    if (messageBoxRef.current) {
-      messageBoxRef.current.scrollTop = messageBoxRef.current.scrollHeight;
-    }
-  };
-  useEffect(() => {
-    scrollToBottom();
-  }, [chatData]);
 
   return (
     <ChatListWrapper>
@@ -59,6 +64,7 @@ function ChatList(props: any) {
             placeholder="Write Message here..."
             onChange={(e) => setChatContent(e.target.value)}
             value={chatContent}
+            onKeyPress={sendOnEnter}
           ></textarea>
           <button onClick={handleClickSend}>Send</button>
         </WriteChat>
